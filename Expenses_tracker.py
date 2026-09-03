@@ -1,4 +1,8 @@
 import json
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_FILE = os.path.join(BASE_DIR, "expenses.json")
 
 expenses = []
 
@@ -44,13 +48,13 @@ def delete_expenses():
         print("Enter a valid number")
         
 def save_expenses():
-    with open("expenses.json", "w") as file:
+    with open(DATA_FILE, "w") as file:
         json.dump(expenses, file)
         
 def load_expenses():
     global expenses
     try:
-        with open("expenses.json", "r") as file:
+        with open(DATA_FILE, "r") as file:
             expenses = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         print("There is no existing file here; a new file is being created.")
