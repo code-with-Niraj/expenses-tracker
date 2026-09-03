@@ -1,3 +1,5 @@
+import json
+
 expenses = []
 
 def add_expenses():
@@ -7,6 +9,7 @@ def add_expenses():
         note = input("Note: ")
         expenses.append({"amount": amount, "category": category, "note": note})
         print("Added successfully")
+        save_expenses()
         
     except ValueError:
         print("Enter only numbers")
@@ -35,10 +38,24 @@ def delete_expenses():
         delete = user_choice - 1
         removed = expenses.pop(delete)
         print("Removed:", removed)
+        save_expenses()
         
     except ValueError:
         print("Enter a valid number")
-
+        
+def save_expenses():
+    with open("expenses.json", "w") as file:
+        json.dump(expenses, file)
+        
+def load_expenses():
+    global expenses
+    try:
+        with open("expenses.json", "r") as file:
+            expenses = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        print("There is no existing file here; a new file is being created.")
+        
+load_expenses()
 while True:
     try:
         print("1. Add Expenses")
