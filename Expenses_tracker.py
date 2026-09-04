@@ -60,12 +60,32 @@ def load_expenses():
         print("There is no existing file here; a new file is being created.")
         
 load_expenses()
+
+def total_expenses():
+    total = sum([e['amount'] for e in expenses])
+    return total 
+ 
+def category_summary():
+    summary = {}
+    for e in expenses:
+        category = e["category"]
+        summary[category] = summary.get(category , 0) + e['amount']
+    return summary
+
+def show_summary():
+    total = total_expenses()
+    print(f"Total expenses is {total}.")
+    summary = category_summary()
+    for category, amount in summary.items():
+        print(f"{category} : Rs. {amount}")
+
 while True:
     try:
         print("1. Add Expenses")
         print("2. View Expenses")
         print("3. Delete Expenses")
-        print("4. Exit")
+        print("4. Summary")
+        print("5. Exit")
         
         choice = int(input("Choose an option: "))
         
@@ -79,9 +99,12 @@ while True:
             delete_expenses()
             
         elif choice == 4:
+            show_summary()
+            
+        elif choice == 5:
             break
         else:
-            print("Wrong choice, choose only 1-4")
+            print("Wrong choice, choose only 1-5")
         
     except ValueError:
         print("Enter only numbers")
