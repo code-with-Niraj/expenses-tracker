@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 expenses.json
+budget.txt
 __pycache__/
 *.py[codz]
 *$py.class

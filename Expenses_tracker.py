@@ -3,9 +3,12 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(BASE_DIR, "expenses.json")
+BUDGET_FILE = os.path.join(BASE_DIR, "budget.txt")
 
 expenses = []
+budget = 0
 
+# Add Expenses
 def add_expenses():
     try:
         amount = float(input("Amount : "))
@@ -18,6 +21,7 @@ def add_expenses():
     except ValueError:
         print("Enter only numbers")
 
+# View Expenses
 def view_expenses():
     if not expenses:
         print("No expenses added yet")
@@ -25,7 +29,8 @@ def view_expenses():
     else:
         for i, e in enumerate(expenses, 1):
             print(f"{i}. {e['category']} - Rs. {e['amount']} - Note: {e['note']}")
-
+            
+# Delete Expenses
 def delete_expenses():
     if not expenses:
         print("No expenses to delete")
@@ -47,6 +52,7 @@ def delete_expenses():
     except ValueError:
         print("Enter a valid number")
         
+# save expenses       
 def save_expenses():
     with open(DATA_FILE, "w") as file:
         json.dump(expenses, file)
@@ -61,10 +67,12 @@ def load_expenses():
         
 load_expenses()
 
+# total expenses
 def total_expenses():
     total = sum([e['amount'] for e in expenses])
     return total 
  
+# category summary
 def category_summary():
     summary = {}
     for e in expenses:
@@ -72,6 +80,7 @@ def category_summary():
         summary[category] = summary.get(category , 0) + e['amount']
     return summary
 
+# show summary
 def show_summary():
     total = total_expenses()
     print(f"Total expenses is {total}.")
@@ -79,16 +88,51 @@ def show_summary():
     for category, amount in summary.items():
         print(f"{category} : Rs. {amount}")
 
+    if budget > 0:
+        print(f"Budget Set: Rs. {budget}")
+        if total > budget:
+            print(f"Budget exceeded by Rs. {total - budget}!")
+        else:
+            print(f"Remaining budget: Rs. {budget - total}")
+    else:
+        print("No budget set yet.")
+       
+def set_budget(): 
+    global budget      
+    budget = float(input("Set your Budget.: "))
+    with open (BUDGET_FILE, "w") as file:
+        file.write(str(budget))
+        
+
+def load_budget():
+    global budget
+    try:
+        with open(BUDGET_FILE, "r") as file:
+            budget = float(file.read())
+    except (FileNotFoundError, ValueError):
+        budget = 0
+        
+load_budget()
+    
+
 while True:
     try:
         print("1. Add Expenses")
         print("2. View Expenses")
         print("3. Delete Expenses")
-        print("4. Summary")
-        print("5. Exit")
+        print("4. Set Budget")
+        print("5. Summary")
+        print("6. Exit")
         
-        choice = int(input("Choose an option: "))
-        
+        while True:
+            try:
+                choice = int(input("Choose an option: "))
+                if 1 <= choice <= 6:
+                    break
+                else:
+                    print("Invailed option.")
+            except:
+                print("Invailed option.")
         if choice == 1:
             add_expenses()
             
@@ -99,12 +143,15 @@ while True:
             delete_expenses()
             
         elif choice == 4:
-            show_summary()
+            set_budget()
             
         elif choice == 5:
+            show_summary()
+            
+        elif choice == 6:
             break
         else:
-            print("Wrong choice, choose only 1-5")
+            print("Wrong choice, choose only 1-6")
         
     except ValueError:
         print("Enter only numbers")
